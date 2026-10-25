@@ -7,9 +7,9 @@ import json
 from types import SimpleNamespace as NS
 
 from helpers import demo_settings
-from kestrelcop.ai import WatchOfficer, verify_citations
-from kestrelcop.models import Alert, Event, Track
-from kestrelcop.store import Store
+from shirleycop.ai import WatchOfficer, verify_citations
+from shirleycop.models import Alert, Event, Track
+from shirleycop.store import Store
 
 
 def seeded_store() -> Store:
@@ -145,7 +145,7 @@ async def test_claude_loop_streams_tools_then_text_and_checks_citations():
 async def test_claude_sitrep_stream_and_triage_use_the_snapshot():
     store = seeded_store()
     client = FakeClient([
-        {"stop_reason": "end_turn", "content": [{"type": "text", "text": "KESTREL SITREP — DTG 011200Z\n1. SITUATION — one emergency [adsb-emerg]."}]},
+        {"stop_reason": "end_turn", "content": [{"type": "text", "text": "SHIRLEY SITREP — DTG 011200Z\n1. SITUATION — one emergency [adsb-emerg]."}]},
         {"stop_reason": "end_turn", "content": [{"type": "text", "text": "SPOTREP alt-1\n1. WHAT: 7700 from UPS556 [adsb-emerg]"}]},
     ])
     officer = WatchOfficer(store, demo_settings(), client=client)

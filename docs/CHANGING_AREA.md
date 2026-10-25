@@ -1,14 +1,14 @@
 # Changing the area of interest
 
-Kestrel draws one picture around one centre point. This guide is for an administrator who wants to move that
+Shirley draws one picture around one centre point. This guide is for an administrator who wants to move that
 picture somewhere else: it explains the three settings that define the area, what every feed, rule and screen
 does with them, and what else you should look at after a move. A worked example at the end moves the picture
 from Norfolk, Virginia to Ottawa, Canada.
 
 ## 1. The area settings
 
-Everything hangs off one block in `config/kestrel.yaml` (written by `kestrel init-config`; the defaults live in
-`AreaConfig` in [`kestrelcop/config.py`](../kestrelcop/config.py)):
+Everything hangs off one block in `config/shirley.yaml` (written by `shirley init-config`; the defaults live in
+`AreaConfig` in [`shirleycop/config.py`](../shirleycop/config.py)):
 
 ```yaml
 area:
@@ -23,7 +23,7 @@ area:
 | `center` | `[lat, lon]` | Latitude first. West longitudes and south latitudes are negative. Use four decimals; more buys nothing. |
 | `radius_nm` | Reach, in nautical miles | Converted to kilometres internally (`radius_km = radius_nm × 1.852`). Everything below uses one of the two. |
 
-Changing the file requires a restart: `Ctrl+C` then `kestrel serve` again. The console reads the new area from
+Changing the file requires a restart: `Ctrl+C` then `shirley serve` again. The console reads the new area from
 the server's hello message, so reload the browser afterwards as well. Section 1b shows the no-restart way.
 
 ## 1b. Changing the area from the console
@@ -44,9 +44,9 @@ The same thing is available to scripts as `POST /api/area` with a JSON body of `
 `radius_nm` and optional `keep_zones`; `GET /api/area` returns the current values. Bad input gets a 400 and
 changes nothing.
 
-**Persistence.** In live mode the change is written next to your config as `config/kestrel.area.yaml` (the
-override file; it is gitignored). At startup Kestrel applies that file's `area` and `zones` on top of
-`kestrel.yaml`, so your hand-written config keeps its comments and the console's choice survives a restart.
+**Persistence.** In live mode the change is written next to your config as `config/shirley.area.yaml` (the
+override file; it is gitignored). At startup Shirley applies that file's `area` and `zones` on top of
+`shirley.yaml`, so your hand-written config keeps its comments and the console's choice survives a restart.
 Delete the override file to go back to what the config says. In demo mode there is no config file, so the
 change lasts for that run only and the dialog says so.
 
@@ -71,8 +71,8 @@ the suggestion chips still mention Norfolk until you edit them.
 | Rules: zones | Zones are absolute coordinates in `rules.zones`. They do not move with the centre; see section 3. |
 | Console | Opens the map on the centre at a fixed zoom (`HOME_ZOOM` in `app.js`, 7.4, which frames about 150 nm on a typical screen). The home button returns there. |
 | Watch officer | Sees the name, centre and radius in every snapshot and in the `picture_summary` tool, and the standing orders tell it to describe the picture in those terms. |
-| CoT / TAK | Not affected. Positions are absolute; your TAK clients show whatever Kestrel publishes. |
-| Demo world | Has its own centre: `kestrel demo --center LAT,LON`. The scripted scenario (emergency squawk, dark ship, zone entry) is laid out relative to that centre, so it still plays anywhere, over whatever geography is there. |
+| CoT / TAK | Not affected. Positions are absolute; your TAK clients show whatever Shirley publishes. |
+| Demo world | Has its own centre: `shirley demo --center LAT,LON`. The scripted scenario (emergency squawk, dark ship, zone entry) is laid out relative to that centre, so it still plays anywhere, over whatever geography is there. |
 
 The one hard dependency on the United States is the NWS feed. Everything else is global.
 
@@ -107,18 +107,18 @@ outside the US so the Feeds panel shows it as off instead of a feed that is fore
 ```
 
 **Radius.** A radius that suited a coastal port may be wrong inland. Shrink it and the console's home zoom
-will look too far out; if that bothers you, lower `HOME_ZOOM` in `kestrelcop/web/static/app.js` (one zoom
+will look too far out; if that bothers you, lower `HOME_ZOOM` in `shirleycop/web/static/app.js` (one zoom
 level halves the width shown). Grow it beyond 250 nm and adsb.lol stops growing with it.
 
 **Watch officer examples.** The suggestion chips under the question box and the placeholder text in
-`kestrelcop/web/static/index.html` mention the Norfolk picture ("near the cutter", "What is inside ROZ ALPHA
+`shirleycop/web/static/index.html` mention the Norfolk picture ("near the cutter", "What is inside ROZ ALPHA
 right now?"). They are only examples, but an operator will trust the console more if they match the area.
 
 **The README screenshot and names.** Purely cosmetic, but the README describes Hampton Roads as the default.
 
 ## 4. Expectations by region
 
-What a feed shows depends on what exists where you point it, not on Kestrel:
+What a feed shows depends on what exists where you point it, not on Shirley:
 
 - **Air** coverage from adsb.lol depends on volunteer receivers. Dense around cities and airports worldwide;
   thin over oceans, deserts and high latitudes. A military field nearby produces the `MILITARY` flag often.
@@ -133,7 +133,7 @@ What a feed shows depends on what exists where you point it, not on Kestrel:
 
 ## 5. Worked example: Norfolk to Ottawa
 
-Edit `config/kestrel.yaml`:
+Edit `config/shirley.yaml`:
 
 ```yaml
 area:
@@ -158,7 +158,7 @@ Then:
 
 ```bash
 # Ctrl+C the running server
-kestrel serve
+shirley serve
 # reload the browser once "Uvicorn running" appears
 ```
 
@@ -171,7 +171,7 @@ What to expect:
 - USGS shows the Western Quebec seismic zone: small events every few weeks, occasionally felt.
 - The first SITREP names Ottawa and the new radius, because it reads them from the snapshot.
 
-For a demo over the same geography: `kestrel demo --center 45.42,-75.69`.
+For a demo over the same geography: `shirley demo --center 45.42,-75.69`.
 
 ## 6. Checklist
 

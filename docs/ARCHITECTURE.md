@@ -1,4 +1,4 @@
-# Kestrel COP architecture
+# Shirley COP architecture
 
 ## Data flow
 
@@ -19,7 +19,7 @@ bus subscribers:  web.Broadcaster  (coalesces tracks/events/feeds into ~300 ms b
 The `Pipeline` object is the `FeedContext` every adapter talks to. Feeds know nothing about the store, the
 rules, the web or TAK; they emit models and report their own health.
 
-## Models (`kestrelcop/models.py`)
+## Models (`shirleycop/models.py`)
 
 | Model | Identity | Notes |
 | --- | --- | --- |
@@ -31,11 +31,11 @@ rules, the web or TAK; they emit models and report their own health.
 Flags are owned by the rules engine. The store carries them forward across updates; the engine clears them
 when the condition ends (a track that reports again is no longer `DARK`; a squawk change clears `EMERGENCY`).
 
-## Symbology and CoT (`kestrelcop/cot/sidc.py`, `encode.py`)
+## Symbology and CoT (`shirleycop/cot/sidc.py`, `encode.py`)
 
 Both schemes encode affiliation, battle dimension and function, so one table drives both:
 
-| Kestrel function | 2525C SIDC (neutral) | CoT type |
+| Shirley function | 2525C SIDC (neutral) | CoT type |
 | --- | --- | --- |
 | air / fixed_wing | `SNAPCF---------` | `a-n-A-C-F` |
 | air / rotary | `SNAPCH---------` | `a-n-A-C-H` |
@@ -55,7 +55,7 @@ else is `neutral`, and tracks with no callsign and no category are `unknown`. Ch
 The browser asks milsymbol for symbols with `civilianColor: false`, so civil traffic takes the affiliation
 colour instead of 2525's civilian purple; that keeps the handful of military tracks visually distinct.
 
-## Rules (`kestrelcop/rules/engine.py`)
+## Rules (`shirleycop/rules/engine.py`)
 
 | Rule | Trigger | Severity |
 | --- | --- | --- |
@@ -70,7 +70,7 @@ colour instead of 2525's civilian purple; that keeps the handful of military tra
 Every rule fires once per (rule, subject) key until the condition clears. This file is deliberately boring:
 it is the standard library of the rules DSL that comes next.
 
-## The watch officer (`kestrelcop/ai/`)
+## The watch officer (`shirleycop/ai/`)
 
 - `tools.py`: the only window the model has onto the picture. `picture_summary`, `search_tracks` (filters,
   radius searches, nearest-first), `get_track`, `list_alerts`, `list_events`, `measure`, `feed_health`. The
@@ -87,7 +87,7 @@ it is the standard library of the rules DSL that comes next.
 Streaming reaches the browser as server-sent events: `tool` (a call started), `tool_result` (its summary and
 duration), `text` (a delta), `done` (the verified `Answer`/`Sitrep`), `error`.
 
-## Web (`kestrelcop/web/`)
+## Web (`shirleycop/web/`)
 
 Starlette (the layer FastAPI sits on; the surface is small enough that hand-written handlers are clearer).
 The `Broadcaster` subscribes to the bus once and fans out to every connected browser, coalescing track
@@ -101,7 +101,7 @@ Inter typeface), UI fonts (`static/fonts`) and the Natural Earth fallback basema
 `tools/make_basemap.py`) ship in the repository, so the only external dependency at runtime is the Esri
 raster basemap, and the picture survives without it.
 
-## Extending Kestrel
+## Extending Shirley
 
 **A new feed.** Subclass `feeds.base.Feed`, implement `poll()` (or override `run()` for a streaming source,
 as `AisFeed` does), build `Track`/`Event` objects in a pure `track_from_*` function, call `self.emit_track`,

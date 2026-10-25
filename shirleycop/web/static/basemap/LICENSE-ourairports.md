@@ -6,7 +6,7 @@ airports worldwide plus small airports with an IATA code and scheduled service, 
 name, size class, municipality, country and elevation.
 
 OurAirports releases its data into the public domain: "the data is in the Public Domain. You may use it in any
-way you like, without asking permission, and without attribution". Kestrel credits it anyway, in the console
+way you like, without asking permission, and without attribution". Shirley credits it anyway, in the console
 footer and the README.
 
 `places.json` is Natural Earth 1:10m populated places; see LICENSE-natural-earth.md.

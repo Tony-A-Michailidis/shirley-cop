@@ -1,6 +1,6 @@
-# Adding a new feed to Kestrel COP
+# Adding a new feed to Shirley COP
 
-This guide is for whoever administers a Kestrel deployment and needs to bring a new data source onto the
+This guide is for whoever administers a Shirley deployment and needs to bring a new data source onto the
 picture: another receiver, a different public API, an internal tracker, a sensor network. It walks through
 the pieces a feed touches, gives a complete worked example you can copy, and lists the conventions that keep
 the rest of the system (rules, CoT output, the console, the watch officer) working without changes.
@@ -24,7 +24,7 @@ pipeline. Everything downstream is generic.
 | Moving things with a position that changes over time (aircraft, vessels) | `Track` | Needs a stable identity per thing so updates replace earlier reports. Dead-reckoned and trailed on the map. |
 | Things that happen or exist at a place (a detection, a warning, an area) | `Event` | Point or polygon. Has an expiry. Not dead-reckoned. |
 
-The models live in [`kestrelcop/models.py`](../kestrelcop/models.py). The fields that matter most:
+The models live in [`shirleycop/models.py`](../shirleycop/models.py). The fields that matter most:
 
 **Track**
 
@@ -34,7 +34,7 @@ The models live in [`kestrelcop/models.py`](../kestrelcop/models.py). The fields
 | `domain` | yes | `"air"` or `"sea"`. These are the only two domains today (see section 8 for adding one). |
 | `source` | yes | The feed's `name`. |
 | `lat`, `lon` | yes | Decimal degrees, WGS84. |
-| `sidc`, `cot_type` | yes | Get them from `air_codes()` / `sea_codes()` in `kestrelcop/cot/sidc.py`; never hand-write them. |
+| `sidc`, `cot_type` | yes | Get them from `air_codes()` / `sea_codes()` in `shirleycop/cot/sidc.py`; never hand-write them. |
 | `affiliation` | no | `friend`, `neutral` (default), `unknown`, `suspect`, `hostile`. |
 | `function` | no | A key of `AIR_FUNCTIONS` or `SEA_FUNCTIONS` in `sidc.py`: `fixed_wing`, `rotary`, `mil_fixed_wing`, `merchant`, `cargo`, `tanker`, `fishing`, `law_enforcement`, … Drives the 2525 symbol. |
 | `callsign` | no | What the label on the map shows. Falls back to the uid. |
@@ -63,30 +63,30 @@ The models live in [`kestrelcop/models.py`](../kestrelcop/models.py). The fields
   ADS-B, NWS, FIRMS and USGS all work this way.
 - **Streaming** (WebSocket, TCP socket, MQTT): subclass `Feed` and override `run()` instead. You own the
   reconnect loop and must call the health methods yourself. `AisFeed` in
-  [`kestrelcop/feeds/ais.py`](../kestrelcop/feeds/ais.py) is the template; section 6 summarises the contract.
+  [`shirleycop/feeds/ais.py`](../shirleycop/feeds/ais.py) is the template; section 6 summarises the contract.
 
 ## 3. The checklist
 
 Every feed touches these places. Do them in order and the feed appears in the console, the health API, the
 rules and the watch officer's `feed_health` tool with no further wiring.
 
-1. **Config class** in `kestrelcop/config.py`: a pydantic model with at least `enabled`, plus whatever the source
+1. **Config class** in `shirleycop/config.py`: a pydantic model with at least `enabled`, plus whatever the source
    needs (URL, key, poll interval). Add it as a field on `FeedsConfig`.
-2. **YAML template** in `config.py` (the `EXAMPLE_YAML` string that `kestrel init-config` writes) and
-   `config/kestrel.example.yaml`: a commented block for the new feed. Secrets are written as `${ENV_VAR}`;
+2. **YAML template** in `config.py` (the `EXAMPLE_YAML` string that `shirley init-config` writes) and
+   `config/shirley.example.yaml`: a commented block for the new feed. Secrets are written as `${ENV_VAR}`;
    the loader expands them from the environment, so keys never live in the file.
-3. **Adapter module** `kestrelcop/feeds/<name>.py` with
+3. **Adapter module** `shirleycop/feeds/<name>.py` with
    - a pure parser `track_from_<x>()` or `event_from_<x>()` that takes one raw record and returns a model or
      `None`. No I/O in here; this is what the tests exercise.
    - a `Feed` subclass with `name`, `label`, and `poll()` (or `run()`).
-4. **Export** it from `kestrelcop/feeds/__init__.py`.
-5. **Register** it in `Pipeline.build_feeds()` in `kestrelcop/pipeline.py`, following the existing pattern: append the
+4. **Export** it from `shirleycop/feeds/__init__.py`.
+5. **Register** it in `Pipeline.build_feeds()` in `shirleycop/pipeline.py`, following the existing pattern: append the
    feed when enabled, otherwise call `self.feed_off(name, label, "disabled in config")` so the console shows the row
    as off instead of omitting it.
-6. **Console order**: add the feed `name` to the `order` list in `renderFeeds()` in `kestrelcop/web/static/app.js`.
+6. **Console order**: add the feed `name` to the `order` list in `renderFeeds()` in `shirleycop/web/static/app.js`.
    Unlisted feeds still render, at the end of the panel.
-7. **Demo world** (optional): if you want the feed row to exist in `kestrel demo`, add `(name, label)` to the tuple in
-   `DemoFeed.run()` in `kestrelcop/feeds/demo.py`, and generate synthetic records in `DemoWorld` if the demo should
+7. **Demo world** (optional): if you want the feed row to exist in `shirley demo`, add `(name, label)` to the tuple in
+   `DemoFeed.run()` in `shirleycop/feeds/demo.py`, and generate synthetic records in `DemoWorld` if the demo should
    show data for it. Skipping this is fine; the row simply does not appear in demo mode.
 8. **Tests** in `tests/test_feeds.py`: one real record from the source through the parser, asserting uid, domain or
    kind, position and the derived symbol codes. Include a malformed record that must return `None`.
@@ -106,7 +106,7 @@ record shape below is illustrative; adapt the field names to what your receiver 
 ### 4.1 Config
 
 ```python
-# kestrelcop/config.py
+# shirleycop/config.py
 
 class LocalAisConfig(BaseModel):
     enabled: bool = False
@@ -124,7 +124,7 @@ class FeedsConfig(BaseModel):
     usgs: UsgsConfig = UsgsConfig()
 ```
 
-And in the YAML template (both `EXAMPLE_YAML` in `config.py` and `config/kestrel.example.yaml`):
+And in the YAML template (both `EXAMPLE_YAML` in `config.py` and `config/shirley.example.yaml`):
 
 ```yaml
   local_ais:
@@ -137,7 +137,7 @@ And in the YAML template (both `EXAMPLE_YAML` in `config.py` and `config/kestrel
 ### 4.2 Adapter
 
 ```python
-# kestrelcop/feeds/local_ais.py
+# shirleycop/feeds/local_ais.py
 """Vessels from a local AIS receiver that publishes its ship list as JSON over HTTP."""
 
 from __future__ import annotations
@@ -209,11 +209,11 @@ Two design choices worth copying:
 ### 4.3 Register and export
 
 ```python
-# kestrelcop/feeds/__init__.py
+# shirleycop/feeds/__init__.py
 from .local_ais import LocalAisFeed
 __all__ = [..., "LocalAisFeed"]
 
-# kestrelcop/pipeline.py, in build_feeds(), next to the AIS block
+# shirleycop/pipeline.py, in build_feeds(), next to the AIS block
         if f.local_ais.enabled:
             feeds.append(LocalAisFeed(self, self.settings))
         else:
@@ -221,7 +221,7 @@ __all__ = [..., "LocalAisFeed"]
 ```
 
 ```js
-// kestrelcop/web/static/app.js, in renderFeeds()
+// shirleycop/web/static/app.js, in renderFeeds()
 const order = ['adsb', 'ais', 'local_ais', 'nws', 'firms', 'usgs'];
 ```
 
@@ -229,7 +229,7 @@ const order = ['adsb', 'ais', 'local_ais', 'nws', 'firms', 'usgs'];
 
 ```python
 # tests/test_feeds.py  (add `timedelta` to the datetime import at the top of the file)
-from kestrelcop.feeds.local_ais import track_from_ship
+from shirleycop.feeds.local_ais import track_from_ship
 
 SHIP = {"mmsi": 367123456, "shipname": "USCGC FORWARD", "lat": 36.95, "lon": -76.33,
         "speed": 11.2, "course": 182.0, "heading": 181, "shiptype": 35, "last_signal": 4}
@@ -245,7 +245,7 @@ def test_local_ais_record_becomes_a_track():
     assert track_from_ship({**SHIP, "last_signal": 9999}, now=NOW) is None
 ```
 
-Run `pytest -q`, then `kestrel serve` with the feed enabled and check:
+Run `pytest -q`, then `shirley serve` with the feed enabled and check:
 
 - the row in the Feeds panel goes `starting` then `ok` and shows a rate;
 - `GET /api/feeds` lists it; `GET /api/tracks` contains entries whose `source` is `local_ais`;
@@ -254,13 +254,13 @@ Run `pytest -q`, then `kestrel serve` with the feed enabled and check:
 
 ## 5. Event feeds
 
-The USGS adapter in [`kestrelcop/feeds/usgs.py`](../kestrelcop/feeds/usgs.py) is the smallest complete example
+The USGS adapter in [`shirleycop/feeds/usgs.py`](../shirleycop/feeds/usgs.py) is the smallest complete example
 of an event feed and is worth reading in full. Points that differ from tracks:
 
 - **Expiry.** Set `expires`. The store's sweep drops events past it; tracks instead age out by domain
   (`store.stale_seconds_air` / `stale_seconds_sea` in the config).
 - **Area filtering is yours to do.** The base class offers `bbox(center, radius_km)` for sources that accept a
-  bounding box, and `kestrelcop.geo.haversine_km` for filtering after the fact. `settings.area.center` and
+  bounding box, and `shirleycop.geo.haversine_km` for filtering after the fact. `settings.area.center` and
   `settings.area.radius_km` describe the configured picture.
 - **Severity conventions.** The console colours point events by `high` / `moderate` / `low` and area events by
   `extreme` / `severe` / `moderate`. The rules engine raises alerts for quakes above `rules.quake_alert_magnitude`,
@@ -308,18 +308,18 @@ Some sources need the model itself extended. Each of these is a small, mechanica
 than one file.
 
 **A new track function** (say `glider` or `tug`): add a row to `AIR_FUNCTIONS` or `SEA_FUNCTIONS` in
-`kestrelcop/cot/sidc.py` with its 2525C function id and CoT suffix, and map to it from your parser. milsymbol
+`shirleycop/cot/sidc.py` with its 2525C function id and CoT suffix, and map to it from your parser. milsymbol
 draws the symbol from the SIDC, so no console change is needed. Add a case to `tests/test_cot.py`.
 
 **A new event kind** (say `volcano` or `outage`):
 
-1. `EventKind` literal in `kestrelcop/models.py`.
-2. `EVENT_COT_TYPES` in `kestrelcop/cot/sidc.py` (what TAK clients receive).
-3. The `kind` enum in `TOOL_SPECS` for `list_events` in `kestrelcop/ai/tools.py`, so the watch officer can filter on it.
-4. The keyword table in `mock_ask()` in `kestrelcop/ai/mock.py` if the keyless officer should recognise it.
+1. `EventKind` literal in `shirleycop/models.py`.
+2. `EVENT_COT_TYPES` in `shirleycop/cot/sidc.py` (what TAK clients receive).
+3. The `kind` enum in `TOOL_SPECS` for `list_events` in `shirleycop/ai/tools.py`, so the watch officer can filter on it.
+4. The keyword table in `mock_ask()` in `shirleycop/ai/mock.py` if the keyless officer should recognise it.
 5. The console: an icon branch in `drawEventIcon()` and a card body line in the event card builder in
-   `kestrelcop/web/static/app.js`; a legend entry in `index.html` if it deserves one.
-6. A rule in `kestrelcop/rules/engine.py` if the kind should raise alerts.
+   `shirleycop/web/static/app.js`; a legend entry in `index.html` if it deserves one.
+6. A rule in `shirleycop/rules/engine.py` if the kind should raise alerts.
 
 **A new domain** (say `ground` for vehicles) is the largest change: the `Domain` literal, a `ground_codes()`
 function in `sidc.py` with its own function table (2525 battle dimension `G`), a stale window in `StoreConfig` and
@@ -337,7 +337,7 @@ assumptions in `app.js`. Plan it as its own change with tests at each layer.
   sent to the browser and the model as-is.
 - **Secrets come from the environment.** Reference them as `${VAR}` in YAML, read them from the config object,
   and when they are missing call `feed_off` with a message naming the variable.
-- **Be a good client.** `self.http` already sends a Kestrel user agent and follows redirects. Respect the
+- **Be a good client.** `self.http` already sends a Shirley user agent and follows redirects. Respect the
   source's rate limits with `poll_seconds`; the backoff on errors is automatic. Public services such as adsb.lol
   and api.weather.gov will block abusive pollers.
 - **Filter to the area.** Sources that return the whole world should be trimmed with the configured centre and
@@ -349,9 +349,9 @@ assumptions in `app.js`. Plan it as its own change with tests at each layer.
 ## 10. Verification checklist
 
 - [ ] `pytest -q` passes, including the new parser test with a real record and a malformed one.
-- [ ] `kestrel serve` shows the feed `ok` with a plausible rate; `kestrel serve` with the feed disabled shows it `off · disabled in config`.
+- [ ] `shirley serve` shows the feed `ok` with a plausible rate; `shirley serve` with the feed disabled shows it `off · disabled in config`.
 - [ ] With the key or URL unset, the row says what to set (not a traceback in the log).
 - [ ] Stopping the source makes the row `degraded` and raises one "Feed stale" alert; restoring it clears the alert.
 - [ ] `GET /api/cot/<uid>` for one of its items is accepted by a TAK client if TAK output is in use.
-- [ ] `kestrel ask "what is the newest <thing> on the picture?"` cites a uid from the feed.
-- [ ] README configuration table and `config/kestrel.example.yaml` document the new block.
+- [ ] `shirley ask "what is the newest <thing> on the picture?"` cites a uid from the feed.
+- [ ] README configuration table and `config/shirley.example.yaml` document the new block.

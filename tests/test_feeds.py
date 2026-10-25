@@ -5,11 +5,11 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from helpers import RecordingContext, demo_settings
-from kestrelcop.feeds.adsb import classify_aircraft, track_from_opensky, track_from_readsb
-from kestrelcop.feeds.ais import AisFeed, classify_vessel
-from kestrelcop.feeds.firms import event_from_row
-from kestrelcop.feeds.nws import event_from_feature as nws_event
-from kestrelcop.feeds.usgs import event_from_feature as usgs_event
+from shirleycop.feeds.adsb import classify_aircraft, track_from_opensky, track_from_readsb
+from shirleycop.feeds.ais import AisFeed, classify_vessel
+from shirleycop.feeds.firms import event_from_row
+from shirleycop.feeds.nws import event_from_feature as nws_event
+from shirleycop.feeds.usgs import event_from_feature as usgs_event
 
 NOW = datetime(2026, 10, 1, 12, 0, 0, tzinfo=timezone.utc)
 

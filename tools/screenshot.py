@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Screenshot a running Kestrel COP with headless Chromium (Playwright) and report browser errors.
+"""Screenshot a running Shirley COP with headless Chromium (Playwright) and report browser errors.
 
     pip install playwright && playwright install chromium
     python tools/screenshot.py --url http://127.0.0.1:8000 --out docs/screenshot.png --wait 12
@@ -40,7 +40,7 @@ def main() -> int:
         page.goto(args.url, wait_until="domcontentloaded")
         time.sleep(args.wait)
         if args.select:
-            page.evaluate(f"window.kestrel && window.kestrel.select({json.dumps(args.select)})")
+            page.evaluate(f"window.shirley && window.shirley.select({json.dumps(args.select)})")
             time.sleep(1.0)
         if args.click:
             page.click(args.click)

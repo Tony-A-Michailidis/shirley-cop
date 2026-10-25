@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Build the offline fallback basemap from Natural Earth (public domain, naturalearthdata.com).
 
-When the Esri basemap tiles cannot be reached (no internet, air-gapped network, blocked proxy) Kestrel still
+When the Esri basemap tiles cannot be reached (no internet, air-gapped network, blocked proxy) Shirley still
 draws coastlines, lakes and national boundaries from these files, so the picture keeps its geography.
 
     git clone --depth 1 --filter=blob:none --sparse https://github.com/nvkelso/natural-earth-vector
     cd natural-earth-vector && git sparse-checkout set --no-cone /geojson/ne_50m_land.geojson \
         /geojson/ne_50m_lakes.geojson /geojson/ne_50m_admin_0_boundary_lines_land.geojson
-    python tools/make_basemap.py natural-earth-vector/geojson --out kestrelcop/web/static/basemap
+    python tools/make_basemap.py natural-earth-vector/geojson --out shirleycop/web/static/basemap
 
 Coordinates are rounded to 3 decimals (~100 m), which is far below the 1:50m source resolution, and
 the smallest islets are dropped. The result is about a third of the size of the originals.
@@ -82,7 +82,7 @@ def simplify(features, nd: int, min_area: float, keep_props: tuple[str, ...]) ->
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("src", help="directory holding the ne_50m_*.geojson files")
-    ap.add_argument("--out", default="kestrelcop/web/static/basemap")
+    ap.add_argument("--out", default="shirleycop/web/static/basemap")
     ap.add_argument("--decimals", type=int, default=3)
     args = ap.parse_args()
     src, out = Path(args.src), Path(args.out)

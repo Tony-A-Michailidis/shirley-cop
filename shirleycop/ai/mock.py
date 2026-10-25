@@ -1,6 +1,6 @@
 """The keyless watch officer. Same tools, same output shapes, templated prose instead of a model.
 
-It exists so `kestrel demo` works on a laptop with no API key and so tests are deterministic. Every
+It exists so `shirley demo` works on a laptop with no API key and so tests are deterministic. Every
 output is labelled MOCK; nothing here pretends to be Claude.
 """
 
@@ -45,7 +45,7 @@ def mock_sitrep(summary: dict[str, Any], tools: PictureTools) -> str:
     def flagged(rows, flag):
         return [t for t in rows if any(f.startswith(flag) for f in t["flags"])]
 
-    lines = [f"KESTREL SITREP — DTG {summary['dtg']}  [MOCK WATCH OFFICER — set ANTHROPIC_API_KEY for Claude]"]
+    lines = [f"SHIRLEY SITREP — DTG {summary['dtg']}  [MOCK WATCH OFFICER — set ANTHROPIC_API_KEY for Claude]"]
     lines.append(
         f"1. SITUATION — {summary['area']['name']}: {counts['by_domain'].get('air', 0)} aircraft and "
         f"{counts['by_domain'].get('sea', 0)} vessels on the picture, {counts['events']} environmental events, "

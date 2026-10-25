@@ -10,9 +10,9 @@ from .. import __version__
 from ..config import Settings
 from ..models import Event, Track
 
-log = logging.getLogger("kestrel.feeds")
+log = logging.getLogger("shirley.feeds")
 
-USER_AGENT = f"kestrel-cop/{__version__} (+https://github.com/Tony-A-Michailidis/kestrel-cop)"
+USER_AGENT = f"shirley-cop/{__version__} (+https://github.com/Tony-A-Michailidis/kestrel-cop)"
 
 
 class FeedContext(Protocol):

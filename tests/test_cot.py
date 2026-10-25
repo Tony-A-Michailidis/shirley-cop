@@ -5,9 +5,9 @@ from __future__ import annotations
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta, timezone
 
-from kestrelcop.cot import air_codes, alert_to_cot, event_to_cot, sea_codes, track_to_cot
-from kestrelcop.cot.sidc import adsb_function, ais_function
-from kestrelcop.models import Alert, Event, Track
+from shirleycop.cot import air_codes, alert_to_cot, event_to_cot, sea_codes, track_to_cot
+from shirleycop.cot.sidc import adsb_function, ais_function
+from shirleycop.models import Alert, Event, Track
 
 NOW = datetime(2026, 10, 1, 12, 0, 0, tzinfo=timezone.utc)
 
@@ -57,7 +57,7 @@ def test_track_to_cot_is_well_formed():
     assert track.get("course") == "90.0"
     assert abs(float(track.get("speed")) - 450 * 0.514444) < 0.01  # knots on the picture, m/s on the wire
     assert "squawk=1200" in ev.find("detail/remarks").text
-    assert ev.find("detail/__kestrel").get("sidc") == "SNAPCF---------"
+    assert ev.find("detail/__shirley").get("sidc") == "SNAPCF---------"
 
 
 def test_track_without_altitude_uses_unknown_hae():
@@ -96,7 +96,7 @@ def test_alert_to_cot_includes_spotrep():
                   text="UAL123 [adsb-abc123] is squawking 7700.", subject_uid="adsb-abc123", lat=36.95, lon=-76.3,
                   ts=NOW, triage="SPOTREP alt-7\n1. WHAT: emergency")
     ev = ET.fromstring(alert_to_cot(alert))
-    assert ev.get("uid") == "kestrel-alt-7"
+    assert ev.get("uid") == "shirley-alt-7"
     assert ev.find("detail/contact").get("callsign").startswith("ALERT HIGH")
     assert "SPOTREP" in ev.find("detail/remarks").text
-    assert ev.find("detail/__kestrel").get("subject") == "adsb-abc123"
+    assert ev.find("detail/__shirley").get("subject") == "adsb-abc123"

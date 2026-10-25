@@ -1,4 +1,4 @@
-"""Command line: `kestrel demo`, `kestrel serve`, `kestrel init-config`, `kestrel sitrep`, `kestrel ask`."""
+"""Command line: `shirley demo`, `shirley serve`, `shirley init-config`, `shirley sitrep`, `shirley ask`."""
 
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ def cmd_demo(args: argparse.Namespace) -> None:
     if args.ai_off:
         settings.ai.enabled = False
     mode = "Claude (" + settings.ai.model + ")" if os.environ.get("ANTHROPIC_API_KEY") else "mock watch officer (set ANTHROPIC_API_KEY for Claude)"
-    print(f"Kestrel COP {__version__} — demo world, seed {settings.demo.seed}, AI: {mode}")
+    print(f"Shirley COP {__version__} — demo world, seed {settings.demo.seed}, AI: {mode}")
     print(f"  open http://{args.host or settings.web.host}:{args.port or settings.web.port}/")
     _serve(settings, args.host, args.port)
 
@@ -41,9 +41,9 @@ def cmd_demo(args: argparse.Namespace) -> None:
 def cmd_serve(args: argparse.Namespace) -> None:
     path = Path(args.config)
     if not path.exists():
-        sys.exit(f"config not found: {path} (run `kestrel init-config` to create one)")
+        sys.exit(f"config not found: {path} (run `shirley init-config` to create one)")
     settings = Settings.load(path)
-    print(f"Kestrel COP {__version__} — {settings.area.name}, feeds: "
+    print(f"Shirley COP {__version__} — {settings.area.name}, feeds: "
           + ", ".join(n for n, f in (("adsb", settings.feeds.adsb), ("ais", settings.feeds.ais), ("nws", settings.feeds.nws),
                                      ("firms", settings.feeds.firms), ("usgs", settings.feeds.usgs)) if f.enabled))
     print(f"  open http://{args.host or settings.web.host}:{args.port or settings.web.port}/")
@@ -60,7 +60,7 @@ def cmd_init_config(args: argparse.Namespace) -> None:
 
 
 def _client_get(url: str, path: str, method: str = "GET", body: dict | None = None) -> dict:
-    """Tiny HTTP client for the CLI (standard library only, so `kestrel ask` works anywhere)."""
+    """Tiny HTTP client for the CLI (standard library only, so `shirley ask` works anywhere)."""
     import urllib.error
     import urllib.request
 
@@ -74,7 +74,7 @@ def _client_get(url: str, path: str, method: str = "GET", body: dict | None = No
         detail = exc.read().decode("utf-8", "replace")[:300]
         sys.exit(f"{method} {path} failed: HTTP {exc.code} {detail}")
     except urllib.error.URLError as exc:
-        sys.exit(f"cannot reach {url}: {exc.reason} (is `kestrel demo` or `kestrel serve` running?)")
+        sys.exit(f"cannot reach {url}: {exc.reason} (is `shirley demo` or `shirley serve` running?)")
 
 
 def cmd_sitrep(args: argparse.Namespace) -> None:
@@ -94,8 +94,8 @@ def cmd_ask(args: argparse.Namespace) -> None:
 
 
 def main(argv: list[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(prog="kestrel", description="Kestrel COP — open-feeds common operational picture with an AI watch officer")
-    parser.add_argument("--version", action="version", version=f"kestrel-cop {__version__}")
+    parser = argparse.ArgumentParser(prog="shirley", description="Shirley COP — open-feeds common operational picture with an AI watch officer")
+    parser.add_argument("--version", action="version", version=f"shirley-cop {__version__}")
     parser.add_argument("-v", "--verbose", action="store_true")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
@@ -110,17 +110,17 @@ def main(argv: list[str] | None = None) -> None:
     p.set_defaults(func=cmd_demo)
 
     p = sub.add_parser("serve", help="run with live feeds from a config file")
-    p.add_argument("-c", "--config", default="config/kestrel.yaml")
+    p.add_argument("-c", "--config", default="config/shirley.yaml")
     p.add_argument("--host")
     p.add_argument("--port", type=int)
     p.set_defaults(func=cmd_serve)
 
     p = sub.add_parser("init-config", help="write an example config file")
-    p.add_argument("path", nargs="?", default="config/kestrel.yaml")
+    p.add_argument("path", nargs="?", default="config/shirley.yaml")
     p.add_argument("--force", action="store_true")
     p.set_defaults(func=cmd_init_config)
 
-    p = sub.add_parser("sitrep", help="ask a running Kestrel for a fresh SITREP")
+    p = sub.add_parser("sitrep", help="ask a running Shirley for a fresh SITREP")
     p.add_argument("--url", default="http://127.0.0.1:8000")
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_sitrep)

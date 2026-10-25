@@ -3,10 +3,10 @@
 The quickest way to any of these is the **Quick select** list at the top of the console's area dialog (click the area
 name in the top bar): it carries the same entries as the tables below and fills in the name, centre and radius.
 
-Kestrel only keeps the cameras inside the configured area, so the picture has to be over a covered region to
+Shirley only keeps the cameras inside the configured area, so the picture has to be over a covered region to
 show any. This page lists ready-made areas for every camera source, with a centre and radius you can paste into
 the console's area dialog (click the area name in the top bar, or right-click the map) or into `area` in
-`config/kestrel.yaml`. [CHANGING_AREA.md](CHANGING_AREA.md) explains the move itself; [CAMERAS.md](CAMERAS.md)
+`config/shirley.yaml`. [CHANGING_AREA.md](CHANGING_AREA.md) explains the move itself; [CAMERAS.md](CAMERAS.md)
 explains the sources.
 
 Camera counts are approximate and change as agencies add and retire cameras.
@@ -42,8 +42,8 @@ Camera counts are approximate and change as agencies add and retire cameras.
 | Atlanta | `[33.75, -84.39]` | 50 | Georgia 511 | key from https://511ga.org/developers |
 | Phoenix | `[33.45, -112.07]` | 50 | Arizona 511 | key from https://az511.gov/developers |
 
-Put the key in the environment and reference it from the `cars` list in `config/kestrel.yaml`; entries with an
-empty key are skipped, so the example list in `config/kestrel.example.yaml` is safe to copy as is.
+Put the key in the environment and reference it from the `cars` list in `config/shirley.yaml`; entries with an
+empty key are skipped, so the example list in `config/shirley.example.yaml` is safe to copy as is.
 
 ## Things to keep in mind
 

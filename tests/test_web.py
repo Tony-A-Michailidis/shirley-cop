@@ -7,10 +7,10 @@ import tempfile
 from pathlib import Path
 
 from helpers import AsgiClient, demo_settings
-from kestrelcop.ai import WatchOfficer
-from kestrelcop.pipeline import Pipeline
-from kestrelcop.store import Store
-from kestrelcop.web import server
+from shirleycop.ai import WatchOfficer
+from shirleycop.pipeline import Pipeline
+from shirleycop.store import Store
+from shirleycop.web import server
 
 
 def build():
@@ -68,7 +68,7 @@ async def test_watch_officer_endpoints():
         code, _, _ = await client.request("GET", "/api/ai/sitrep")
         assert code == 404  # none yet
         events = await client.sse("/api/ai/sitrep/stream", max_events=400)
-        assert events[-1]["t"] == "done" and "KESTREL SITREP" in events[-1]["sitrep"]["text"]
+        assert events[-1]["t"] == "done" and "SHIRLEY SITREP" in events[-1]["sitrep"]["text"]
         last = await client.get_json("/api/ai/sitrep")
         assert last["text"] == events[-1]["sitrep"]["text"]
         assert pipeline.watch_officer.last_sitrep is not None
@@ -96,7 +96,7 @@ async def test_index_and_static_assets_are_served():
     _, _, app = build()
     async with AsgiClient(app) as client:
         code, headers, body = await client.request("GET", "/")
-        assert code == 200 and b"<title>Kestrel COP</title>" in body
+        assert code == 200 and b"<title>Shirley COP</title>" in body
         for path in ("/static/app.js", "/static/style.css", "/static/basemap/land.json", "/static/glyphs/Inter%20SemiBold/0-255.pbf", "/static/fonts/Inter-Regular.woff"):
             code, _, body = await client.request("GET", path)
             assert code == 200 and len(body) > 100, path

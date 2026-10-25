@@ -1,4 +1,4 @@
-"""Cursor-on-Target XML encoding. One function per Kestrel type; all produce bytes ready for the wire.
+"""Cursor-on-Target XML encoding. One function per Shirley type; all produce bytes ready for the wire.
 
 CoT reference: the ATAK/TAK "CoT 2.0" event schema (event/point/detail). Speeds on the wire are m/s,
 altitudes are metres HAE. Unknown accuracy is signalled with the conventional 9999999.
@@ -80,7 +80,7 @@ def track_to_cot(track: Track, stale_seconds: int = 120, now: datetime | None = 
     if track.flags:
         remarks.append("flags=" + ",".join(track.flags))
     ET.SubElement(detail, "remarks").text = " ".join(remarks)
-    ET.SubElement(detail, "__kestrel", {
+    ET.SubElement(detail, "__shirley", {
         "source": track.source,
         "sidc": track.sidc,
         "domain": track.domain,
@@ -129,20 +129,20 @@ def event_to_cot(event: Event, now: datetime | None = None) -> bytes:
             "angle": "0",
         })
         ellipse.tail = None
-    ET.SubElement(detail, "__kestrel", {"kind": event.kind, "source": event.source})
+    ET.SubElement(detail, "__shirley", {"kind": event.kind, "source": event.source})
     return ET.tostring(ev, encoding="utf-8", xml_declaration=False)
 
 
 def alert_to_cot(alert: Alert, stale_seconds: int = 1800) -> bytes:
     lat = alert.lat if alert.lat is not None else 0.0
     lon = alert.lon if alert.lon is not None else 0.0
-    ev, detail = _event_element(f"kestrel-{alert.id}", "b-m-p-s-m", "h-e", alert.ts, stale_seconds, lat, lon, None)
+    ev, detail = _event_element(f"shirley-{alert.id}", "b-m-p-s-m", "h-e", alert.ts, stale_seconds, lat, lon, None)
     ET.SubElement(detail, "contact", {"callsign": f"ALERT {alert.severity}: {alert.title}"[:80]})
     text = alert.text
     if alert.triage:
         text += "\n\nSPOTREP: " + alert.triage
     ET.SubElement(detail, "remarks").text = text
-    ET.SubElement(detail, "__kestrel", {
+    ET.SubElement(detail, "__shirley", {
         "alert_id": alert.id, "rule": alert.rule, "severity": alert.severity,
         "subject": alert.subject_uid or "",
     })

@@ -5,12 +5,12 @@ from __future__ import annotations
 from datetime import timedelta
 
 from helpers import demo_settings
-from kestrelcop.ai import WatchOfficer
-from kestrelcop.config import RulesConfig, ZoneConfig
-from kestrelcop.models import Event, FeedStatus, Track, utcnow
-from kestrelcop.pipeline import Pipeline, zone_events
-from kestrelcop.rules import RuleEngine
-from kestrelcop.store import Store
+from shirleycop.ai import WatchOfficer
+from shirleycop.config import RulesConfig, ZoneConfig
+from shirleycop.models import Event, FeedStatus, Track, utcnow
+from shirleycop.pipeline import Pipeline, zone_events
+from shirleycop.rules import RuleEngine
+from shirleycop.store import Store
 
 
 def track(uid="adsb-1", lat=36.95, lon=-76.30, **kw) -> Track:

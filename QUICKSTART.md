@@ -1,18 +1,18 @@
 ## 🚀 Quick start
 
-Two ways to run Kestrel: the **demo world** (synthetic traffic, no keys, no internet) and **live feeds** (real
+Two ways to run Shirley: the **demo world** (synthetic traffic, no keys, no internet) and **live feeds** (real
 data, free keys). Both start with the same one-time install.
 
 ### Install once
 
 ```bash
-git clone https://github.com/Tony-A-Michailidis/kestrel-cop
-cd kestrel-cop
+git clone https://github.com/Tony-A-Michailidis/kestrel-cop shirley-cop
+cd shirley-cop
 python -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 ```
 
-On WSL, clone into the Linux filesystem (`~/kestrel-cop`) rather than `/mnt/c/...`: startup and tests are many
+On WSL, clone into the Linux filesystem (`~/shirley-cop`) rather than `/mnt/c/...`: startup and tests are many
 times faster there.
 
 ### Procedure 1: the demo world
@@ -20,10 +20,10 @@ times faster there.
 Every cold start, from a fresh terminal:
 
 ```bash
-cd kestrel-cop
+cd shirley-cop
 source .venv/bin/activate                # Windows: .venv\Scripts\activate
 export ANTHROPIC_API_KEY=sk-ant-...      # optional: without it a clearly-labelled mock watch officer runs
-kestrel demo
+shirley demo
 ```
 
 Wait for `Uvicorn running on http://127.0.0.1:8000`, then open http://127.0.0.1:8000/. Within the first few
@@ -38,22 +38,22 @@ shows the model working the picture. Stop with `Ctrl+C`.
 One-time preparation:
 
 ```bash
-kestrel init-config                      # writes config/kestrel.yaml (never committed; keys stay out of it)
+shirley init-config                      # writes config/shirley.yaml (never committed; keys stay out of it)
 ```
 
 Then get the free keys: [aisstream.io](https://aisstream.io) for vessels and
 [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov/api/map_key/) for fires, and set `enabled: true` under
-`feeds.firms` in `config/kestrel.yaml`. ADS-B (adsb.lol), NWS weather and USGS earthquakes need no key.
+`feeds.firms` in `config/shirley.yaml`. ADS-B (adsb.lol), NWS weather and USGS earthquakes need no key.
 
 Every cold start, from a fresh terminal:
 
 ```bash
-cd kestrel-cop
+cd shirley-cop
 source .venv/bin/activate                # Windows: .venv\Scripts\activate
 export ANTHROPIC_API_KEY=sk-ant-...      # the word export matters on every line
 export AISSTREAM_API_KEY=...
 export FIRMS_MAP_KEY=...
-kestrel serve --config config/kestrel.yaml
+shirley serve --config config/shirley.yaml
 ```
 
 The startup line lists the feeds that are on and says `AI: Claude (...)`; if it says *mock*, an `export` is

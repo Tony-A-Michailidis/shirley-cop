@@ -12,8 +12,8 @@ import sys
 import urllib.parse
 from typing import Any
 
-from kestrelcop.config import Settings
-from kestrelcop.models import Event, Track
+from shirleycop.config import Settings
+from shirleycop.models import Event, Track
 
 
 async def bounded(awaitable: Any, seconds: float, what: str) -> Any:

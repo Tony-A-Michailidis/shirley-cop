@@ -1,10 +1,10 @@
 .PHONY: demo serve test vendor glyphs screenshot docker
 
 demo:            ## run the synthetic world (no keys, no internet needed)
-	kestrel demo
+	shirley demo
 
-serve:           ## run live feeds from config/kestrel.yaml
-	kestrel serve --config config/kestrel.yaml
+serve:           ## run live feeds from config/shirley.yaml
+	shirley serve --config config/shirley.yaml
 
 test:
 	pytest -q

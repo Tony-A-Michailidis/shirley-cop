@@ -2,7 +2,7 @@
 
 Anything published on the bus as a track, event or alert is encoded to CoT and pushed to PyTAK's
 transmit queue. Transport (tcp/tls/udp, client certificates) is PyTAK's job; configure it with tak.url
-and the tak.tls_* settings. PyTAK is imported lazily so the rest of Kestrel runs without it.
+and the tak.tls_* settings. PyTAK is imported lazily so the rest of Shirley runs without it.
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ from ..config import TakConfig
 from ..models import Alert, Event, Track
 from .encode import alert_to_cot, event_to_cot, track_to_cot
 
-log = logging.getLogger("kestrel.tak")
+log = logging.getLogger("shirley.tak")
 
 
 def encode_bus_message(topic: str, payload: Any, tak: TakConfig) -> bytes | None:
@@ -39,7 +39,7 @@ def _make_sender_class():
     import pytak
 
     class BusSender(pytak.QueueWorker):
-        """Reads Kestrel bus messages, writes CoT bytes into PyTAK's tx_queue."""
+        """Reads Shirley bus messages, writes CoT bytes into PyTAK's tx_queue."""
 
         def __init__(self, tx_queue: asyncio.Queue, config: Any, bus_queue: asyncio.Queue, tak: TakConfig, stats: dict) -> None:
             super().__init__(tx_queue, config)
@@ -77,8 +77,8 @@ class TakPublisher:
         if self.tak.tls_dont_verify:
             section["PYTAK_TLS_DONT_VERIFY"] = "1"
             section["PYTAK_TLS_DONT_CHECK_HOSTNAME"] = "1"
-        parser["kestrel"] = section
-        return parser["kestrel"]
+        parser["shirley"] = section
+        return parser["shirley"]
 
     async def run(self) -> None:
         try:

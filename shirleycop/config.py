@@ -168,7 +168,7 @@ class DemoConfig(BaseModel):
 
 
 def area_override_path(config_path: str | Path) -> Path:
-    """Where a change of area made from the console is saved: next to the config, e.g. config/kestrel.area.yaml.
+    """Where a change of area made from the console is saved: next to the config, e.g. config/shirley.area.yaml.
     It is applied on top of the config at load time and is gitignored, so the hand-written file keeps its comments."""
     return Path(config_path).with_suffix(".area.yaml")
 
@@ -210,7 +210,7 @@ class Settings(BaseModel):
             "zones": [json.loads(z.model_dump_json(exclude_none=True)) for z in self.rules.zones],
         }
         path.write_text(
-            f"# Written by Kestrel when the area is changed from the console; applied on top of {self.source_path.name}\n"
+            f"# Written by Shirley when the area is changed from the console; applied on top of {self.source_path.name}\n"
             "# at startup. Delete this file to return to the area and zones in the config.\n"
             + yaml.safe_dump(data, sort_keys=False), encoding="utf-8")
         return path
@@ -233,7 +233,7 @@ class Settings(BaseModel):
         return s
 
 
-EXAMPLE_YAML = """# Kestrel COP configuration. Secrets come from the environment: ${VAR} is expanded at load time.
+EXAMPLE_YAML = """# Shirley COP configuration. Secrets come from the environment: ${VAR} is expanded at load time.
 area:
   name: Hampton Roads / Chesapeake approaches
   center: [36.95, -76.30]      # lat, lon
@@ -280,8 +280,8 @@ feeds:
 tak:
   enabled: false
   url: tcp://127.0.0.1:8087        # TAK Server: tls://host:8089 with the certs below
-  # tls_client_cert: certs/kestrel.pem
-  # tls_client_key: certs/kestrel.key
+  # tls_client_cert: certs/shirley.pem
+  # tls_client_key: certs/shirley.key
   # tls_dont_verify: true
   publish_alerts: true
   publish_cameras: false           # traffic cameras as markers in ATAK (many; off by default)
@@ -299,7 +299,7 @@ rules:
 
 ai:
   enabled: true
-  model: claude-sonnet-5-5         # ANTHROPIC_API_KEY in the environment; without it Kestrel runs the mock watch officer
+  model: claude-sonnet-5-5         # ANTHROPIC_API_KEY in the environment; without it Shirley runs the mock watch officer
   triage_model: claude-haiku-4-5-20251001   # cheaper model for alert SPOTREPs (optional)
   auto_sitrep: true
   sitrep_every_minutes: 10

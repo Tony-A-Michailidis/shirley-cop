@@ -13,14 +13,16 @@ venv/
 .env
 .env.*
 !.env.example
+config/shirley.yaml
+# the pre-rename name of the local config, kept ignored
 config/kestrel.yaml
 # the area override written from the console (gitignore has no trailing comments, so this line is on its own)
 config/*.area.yaml
 certs/
 
 # Browser libraries fetched by tools/vendor.sh (served from CDN otherwise)
-kestrelcop/web/static/vendor/*
-!kestrelcop/web/static/vendor/README.md
+shirleycop/web/static/vendor/*
+!shirleycop/web/static/vendor/README.md
 
 # Local artefacts
 evidence/

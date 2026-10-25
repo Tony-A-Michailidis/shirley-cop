@@ -28,9 +28,9 @@ from . import mock as mock_officer
 from .prompts import ASK_SYSTEM, SITREP_SYSTEM, TRIAGE_SYSTEM
 from .tools import TOOL_SPECS, PictureTools, compact_alert, compact_event, compact_track
 
-log = logging.getLogger("kestrel.ai")
+log = logging.getLogger("shirley.ai")
 
-CITATION_RE = re.compile(r"\[((?:adsb|ais|nws|firms|usgs|alt|zone|cam|kestrel)-[^\]\s]+)\]")
+CITATION_RE = re.compile(r"\[((?:adsb|ais|nws|firms|usgs|alt|zone|cam|shirley)-[^\]\s]+)\]")
 MOCK_TOOL_DELAY = 0.25      # seconds; the mock officer paces itself so the trace is readable
 MOCK_TEXT_DELAY = 0.012     # per chunk
 
@@ -274,7 +274,7 @@ class WatchOfficer:
             import httpx  # imported lazily: the mock officer and the tests need no network stack
 
             self._image_http = httpx.AsyncClient(timeout=20.0, follow_redirects=True,
-                                                 headers={"User-Agent": "kestrel-cop (watch officer camera view)"})
+                                                 headers={"User-Agent": "shirley-cop (watch officer camera view)"})
         return self._image_http
 
     async def _camera_content(self, result: dict[str, Any], step: dict[str, Any]) -> tuple[Any, dict[str, Any]]:

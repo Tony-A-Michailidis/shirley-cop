@@ -20,7 +20,7 @@ from .models import Alert, Event, FeedStatus, Track, utcnow
 from .rules import RuleEngine
 from .store import Store
 
-log = logging.getLogger("kestrel.pipeline")
+log = logging.getLogger("shirley.pipeline")
 
 
 def zone_events(settings: Settings) -> list[Event]:

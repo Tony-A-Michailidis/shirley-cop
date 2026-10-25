@@ -1,6 +1,6 @@
 # Traffic cameras on the picture
 
-Kestrel draws open traffic and roadside cameras on the map, shows their current still image on demand, and
+Shirley draws open traffic and roadside cameras on the map, shows their current still image on demand, and
 lets the watch officer look at a camera and tell you what it sees. This page explains where the cameras come
 from, what the licences allow, how the imagery flows, and how to ask the officer about them.
 
@@ -36,14 +36,14 @@ published API), and commercial aggregators such as Windy, whose terms forbid red
    panel shows the per-source counts.
 2. The **console** hotlinks the image from the agency when you open a camera, with a cache-busting
    parameter, and refreshes it on the source's cadence. If the agency refuses the browser (referer or
-   mixed-content rules), the card falls back to Kestrel's proxy.
+   mixed-content rules), the card falls back to Shirley's proxy.
 3. The **proxy**, `GET /api/camera/{uid}/image`, fetches the current still server-side, with a 20 second
    cache so a burst of viewers is one request to the agency, a 4 MB size cap and a content-type check.
    Images are never written to disk or kept beyond that cache.
 4. **TAK** does not receive cameras unless `tak.publish_cameras` is true, because thousands of static markers
    are rarely wanted in ATAK. When enabled they go out as spot markers whose remarks carry the image URL.
 
-The licences above permit display of the agencies' imagery in your own console. Kestrel does not re-host or
+The licences above permit display of the agencies' imagery in your own console. Shirley does not re-host or
 redistribute it, which is the line most of them draw.
 
 ## The watch officer and cameras
@@ -122,6 +122,6 @@ Alberta at https://511.alberta.ca/developers, and the same `/developers` path on
 ## Adding a camera source
 
 Write a pure `camera_from_<source>()` parser that returns `_camera(...)` from
-[`kestrelcop/feeds/cameras.py`](../kestrelcop/feeds/cameras.py), add a fetch coroutine on `CamerasFeed`, list
+[`shirleycop/feeds/cameras.py`](../shirleycop/feeds/cameras.py), add a fetch coroutine on `CamerasFeed`, list
 it in `_sources()`, and add a config flag. The existing six parsers are each ten to twenty lines, and
 [ADDING_FEEDS.md](ADDING_FEEDS.md) covers the general shape.

@@ -1,6 +1,6 @@
 # Vendored browser libraries
 
-Kestrel's page loads MapLibre GL JS and milsymbol from `/static/vendor/`. When a file is missing here the
+Shirley's page loads MapLibre GL JS and milsymbol from `/static/vendor/`. When a file is missing here the
 server answers with a redirect to the pinned copy on unpkg, so an internet-connected deployment needs
 nothing in this folder. For an offline or air-gapped deployment run `tools/vendor.sh` once on a connected
 machine and ship the folder with the code; everything else the page needs (fonts, label glyphs, coastlines)

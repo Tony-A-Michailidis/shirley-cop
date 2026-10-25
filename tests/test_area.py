@@ -8,12 +8,12 @@ from pathlib import Path
 import pytest
 
 from helpers import AsgiClient, demo_settings
-from kestrelcop.ai import WatchOfficer
-from kestrelcop.config import AreaConfig, Settings, area_override_path
-from kestrelcop.geo import haversine_km
-from kestrelcop.pipeline import Pipeline
-from kestrelcop.store import Store
-from kestrelcop.web import server
+from shirleycop.ai import WatchOfficer
+from shirleycop.config import AreaConfig, Settings, area_override_path
+from shirleycop.geo import haversine_km
+from shirleycop.pipeline import Pipeline
+from shirleycop.store import Store
+from shirleycop.web import server
 
 OTTAWA = (45.42, -75.69)
 
@@ -84,7 +84,7 @@ async def test_area_endpoint_moves_the_picture_and_the_stream_reports_it():
 
 
 def test_area_override_round_trip(tmp_path: Path):
-    cfg = tmp_path / "kestrel.yaml"
+    cfg = tmp_path / "shirley.yaml"
     cfg.write_text("area:\n  name: Norfolk\n  center: [36.95, -76.30]\n  radius_nm: 150\n"
                    "rules:\n  zones:\n    - name: ROZ ALPHA\n      center: [36.85, -75.70]\n      radius_km: 18\n", encoding="utf-8")
     s = Settings.load(cfg)
@@ -93,7 +93,7 @@ def test_area_override_round_trip(tmp_path: Path):
     s.area = AreaConfig(name="Ottawa", center=OTTAWA, radius_nm=100)
     s.rules.zones = []
     path = s.save_area_override()
-    assert path == area_override_path(cfg) == tmp_path / "kestrel.area.yaml"
+    assert path == area_override_path(cfg) == tmp_path / "shirley.area.yaml"
 
     again = Settings.load(cfg)
     assert again.area.name == "Ottawa" and tuple(again.area.center) == OTTAWA and again.rules.zones == []

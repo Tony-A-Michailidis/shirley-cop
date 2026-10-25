@@ -4,7 +4,7 @@
     curl -L -o airports.csv https://davidmegginson.github.io/ourairports-data/airports.csv
     curl -L -o places.geojson \
         https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_populated_places_simple.geojson
-    python tools/make_places.py airports.csv places.geojson --out kestrelcop/web/static/basemap
+    python tools/make_places.py airports.csv places.geojson --out shirleycop/web/static/basemap
 
 Airports: OurAirports (public domain, ourairports.com). Large and medium airports everywhere, plus small
 airports that have an IATA code and scheduled service. Each feature carries the ICAO ident, IATA code, name,
@@ -83,7 +83,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("airports_csv", type=Path)
     ap.add_argument("places_geojson", type=Path)
-    ap.add_argument("--out", type=Path, default=Path("kestrelcop/web/static/basemap"))
+    ap.add_argument("--out", type=Path, default=Path("shirleycop/web/static/basemap"))
     ap.add_argument("--max-rank", type=int, default=10, help="keep Natural Earth places with scalerank <= this")
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)

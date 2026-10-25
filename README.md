@@ -1,6 +1,6 @@
-# Kestrel COP
+# Shirley COP
 
-An open-feeds **common operational picture** with an **AI watch officer**. Kestrel pulls live aircraft
+An open-feeds **common operational picture** with an **AI watch officer**. Shirley pulls live aircraft
 (ADS-B), vessels (AIS), weather warnings (NWS), active fires (NASA FIRMS) and earthquakes (USGS) onto one
 map with MIL-STD-2525 symbology, normalises everything to Cursor-on-Target and publishes it to any TAK
 server (ATAK / WinTAK / iTAK), and puts a Claude-powered watch officer on the floor that writes SITREPs,
@@ -11,18 +11,18 @@ See quick start file (QUICKSTART.md) to run it in your local wsl, either as a de
 Written in Python with the help of Claude. It can run off line on a laptop with no API keys and no internet (a synthetic
 world drives the whole system), or against real feeds with free keys. 
 
-![Kestrel COP: the demo world, an emergency squawk under way, the watch officer answering with citations](docs/screenshot.png)
+![Shirley COP: the demo world, an emergency squawk under way, the watch officer answering with citations](docs/screenshot.png)
 
 ## 🎯 What it does
 
 - **Five open feeds, one picture.** adsb.lol (no key) or OpenSky or your own RTL-SDR receiver; aisstream.io; api.weather.gov; NASA FIRMS; USGS. Each feed is one small adapter with a pure parser that is unit-tested on real record shapes.
-- **MIL-STD-2525 symbols**, drawn by [milsymbol](https://github.com/spatialillusions/milsymbol) from SIDCs Kestrel derives per track: affiliation, battle dimension and function (civil/military fixed wing, rotary, cargo, tanker, fishing, law enforcement…). Tracks are dead-reckoned between reports so the picture moves smoothly, with leader lines and trails.
+- **MIL-STD-2525 symbols**, drawn by [milsymbol](https://github.com/spatialillusions/milsymbol) from SIDCs Shirley derives per track: affiliation, battle dimension and function (civil/military fixed wing, rotary, cargo, tanker, fishing, law enforcement…). Tracks are dead-reckoned between reports so the picture moves smoothly, with leader lines and trails.
 - **Open traffic cameras.** DriveBC, Caltrans, the cities of Toronto and Ottawa, WSDOT and any 511 site on the CARS platform, as still images refreshed by the agencies every one to fifteen minutes. Click a camera for its current frame; ask the watch officer what a camera shows and it looks at the image (`find_cameras`, `view_camera`) and tells you, with the frame it saw in the tool trace. [docs/CAMERAS.md](docs/CAMERAS.md).
 - **Cursor-on-Target out.** Every track, event and alert is encoded as CoT 2.0 (`a-n-A-C-F`, `u-d-f` polygons with ATAK `<link>` vertices, `u-d-c-c` circles) and pushed over [PyTAK](https://github.com/snstac/pytak) to any TAK server over TCP, TLS or UDP. `GET /api/cot/<uid>` shows exactly what goes on the wire.
 - **A rules engine** that raises alerts once, with provenance: emergency squawks (7500/7600/7700), geofenced zones (ROZ entry/exit), AIS gaps for vessels that were under way, severe/extreme weather, large earthquakes, high-intensity fire detections, stale feeds.
 - **The AI watch officer** (Claude, via tool use): a SITREP every few minutes and on demand; a SPOTREP for every alert; free-text questions answered by calling tools against the live store (`search_tracks`, `get_track`, `list_alerts`, `measure`, `feed_health`…). Answers stream into the console tool-call by tool-call, and **every UID the model cites is verified against the picture** and rendered as a link that flies the map to it. Unverifiable citations are flagged, never silently accepted.
 - **A watch-floor console**: dark map, Zulu DTG, feed health, layer toggles, alert ticker with SPOTREPs, track cards with the CoT, a globe view, keyboard shortcuts. One WebSocket (or SSE) carries a snapshot and then deltas.
-- **Works disconnected.** Label glyphs, UI fonts, Natural Earth coastlines and place names, and the OurAirports airport layer are served by Kestrel itself; when basemap tiles are unreachable the console says so and keeps drawing geography, with place names switching to the vendored layer. Browser libraries can be vendored with one script for air-gapped networks.
+- **Works disconnected.** Label glyphs, UI fonts, Natural Earth coastlines and place names, and the OurAirports airport layer are served by Shirley itself; when basemap tiles are unreachable the console says so and keeps drawing geography, with place names switching to the vendored layer. Browser libraries can be vendored with one script for air-gapped networks.
 - **Honest without a key.** No `ANTHROPIC_API_KEY`? A clearly-labelled mock officer runs the same tools and produces templated SITREPs, SPOTREPs and answers, so the demo, the tests and the UI all work end to end.
 
 (live feeds screenshot - Ottawa Ontario Canada area) 
@@ -60,12 +60,12 @@ the layout is remembered per browser.
                                   SITREP/SPOTREP/ask)    to the console)    PyTAK to TAK servers)
 ```
 
-- `kestrelcop/models.py`: `Track`, `Event`, `Alert`, `FeedStatus` (pydantic); everything downstream consumes these.
-- `kestrelcop/feeds/`: one adapter per source with a pure `track_from_*` / `event_from_*` parser; `demo.py` is the deterministic synthetic world (seeded, reproducible) with the scripted scenario.
-- `kestrelcop/cot/`: the SIDC and CoT type tables (`sidc.py`), the XML encoder (`encode.py`), the PyTAK publisher (`tak.py`).
-- `kestrelcop/rules/engine.py`: the detectors. They are the hard-coded ancestor of a rules DSL.
-- `kestrelcop/ai/`: `tools.py` (what the model may look at), `prompts.py` (standing orders), `watch_officer.py` (the streaming agentic loop and the citation check), `mock.py` (the keyless officer).
-- `kestrelcop/web/`: Starlette app, REST, WebSocket/SSE broadcaster, and the static console (`static/app.js`, no build step).
+- `shirleycop/models.py`: `Track`, `Event`, `Alert`, `FeedStatus` (pydantic); everything downstream consumes these.
+- `shirleycop/feeds/`: one adapter per source with a pure `track_from_*` / `event_from_*` parser; `demo.py` is the deterministic synthetic world (seeded, reproducible) with the scripted scenario.
+- `shirleycop/cot/`: the SIDC and CoT type tables (`sidc.py`), the XML encoder (`encode.py`), the PyTAK publisher (`tak.py`).
+- `shirleycop/rules/engine.py`: the detectors. They are the hard-coded ancestor of a rules DSL.
+- `shirleycop/ai/`: `tools.py` (what the model may look at), `prompts.py` (standing orders), `watch_officer.py` (the streaming agentic loop and the citation check), `mock.py` (the keyless officer).
+- `shirleycop/web/`: Starlette app, REST, WebSocket/SSE broadcaster, and the static console (`static/app.js`, no build step).
 
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) goes deeper: data flow, the CoT mapping, the guard rails, and how to add a feed, a rule or a tool.
 [docs/ADDING_FEEDS.md](docs/ADDING_FEEDS.md) is the step-by-step guide for bringing a new data source onto the picture, with a complete worked example.
@@ -74,7 +74,7 @@ the layout is remembered per browser.
 
 ## ⚙️ Configuration
 
-`config/kestrel.yaml` (see `config/kestrel.example.yaml`). `${VAR}` references are expanded from the environment at load time, so secrets never live in the file.
+`config/shirley.yaml` (see `config/shirley.example.yaml`). `${VAR}` references are expanded from the environment at load time, so secrets never live in the file.
 
 | Section | Keys |
 | --- | --- |
@@ -98,12 +98,12 @@ the layout is remembered per browser.
 | `GET/POST /api/area` | The area of interest; POST `{"name", "center": [lat, lon], "radius_nm"}` moves the picture at runtime (feeds restart, zones clear, change saved beside the config) |
 | `GET /api/snapshot` · `/api/tracks` · `/api/tracks/{uid}` · `/api/events` · `/api/alerts` · `/api/feeds` | The picture as JSON |
 | `GET /api/cot/{uid}` | The CoT XML for a track or event |
-| `GET /api/camera/{uid}/image` | The current still of a camera, fetched by Kestrel (short cache, never stored) |
+| `GET /api/camera/{uid}/image` | The current still of a camera, fetched by Shirley (short cache, never stored) |
 | `WS /ws` · `GET /api/stream` | Snapshot then deltas (`tracks`, `events`, `feeds`, `alert`, `remove`, `sitrep`) |
 | `POST /api/ai/ask {"question"}` · `GET /api/ai/ask/stream?q=` | Ask the watch officer; the stream carries `tool`, `tool_result`, `text`, `done` |
 | `GET/POST /api/ai/sitrep` · `GET /api/ai/sitrep/stream` | The latest SITREP, a fresh one, or a fresh one streamed |
 
-From the shell: `kestrel ask "which vessels have an AIS gap?"` and `kestrel sitrep`.
+From the shell: `shirley ask "which vessels have an AIS gap?"` and `shirley sitrep`.
 
 ## 🛡️ The watch officer's guard rails
 
@@ -145,7 +145,7 @@ when `pytak` is installed.
 
 ## ⚠️ Disclaimer
 
-Kestrel is an open-data demonstration of common-operational-picture engineering. It is not certified for
+Shirley is an open-data demonstration of common-operational-picture engineering. It is not certified for
 operational use; its feeds are best-effort public services, and the watch officer is an assistant that cites
 what it saw, not an authority.
 

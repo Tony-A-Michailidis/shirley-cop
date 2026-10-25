@@ -1,4 +1,4 @@
-"""MIL-STD-2525C symbol identification codes and Cursor-on-Target types for the things Kestrel sees.
+"""MIL-STD-2525C symbol identification codes and Cursor-on-Target types for the things Shirley sees.
 
 Both schemes encode the same three facts: affiliation, battle dimension, and function.
 The mapping lives in one place so it can be reviewed by someone who knows the standard.
@@ -49,7 +49,7 @@ def sea_codes(affiliation: Affiliation, function: str) -> tuple[str, str]:
     return sidc, cot_type
 
 
-# AIS ship type (ITU-R M.1371 "type of ship and cargo") -> Kestrel function
+# AIS ship type (ITU-R M.1371 "type of ship and cargo") -> Shirley function
 def ais_function(ship_type: int | None) -> str:
     if ship_type is None:
         return "unknown"

@@ -3,7 +3,7 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "kestrel-cop"
+name = "shirley-cop"
 version = "0.1.0"
 description = "Open-feeds common operational picture with an AI watch officer: ADS-B, AIS, NWS, FIRMS and USGS normalized to Cursor-on-Target, published to TAK, rendered with MIL-STD-2525 symbology."
 readme = "README.md"
@@ -39,13 +39,13 @@ glyphs = ["pillow>=10", "numpy>=1.26", "scipy>=1.11"]
 Homepage = "https://github.com/Tony-A-Michailidis/kestrel-cop"
 
 [project.scripts]
-kestrel = "kestrelcop.cli:main"
+shirley = "shirleycop.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["kestrelcop*"]
+include = ["shirleycop*"]
 
 [tool.setuptools.package-data]
-kestrelcop = ["web/static/*", "web/static/**/*"]
+shirleycop = ["web/static/*", "web/static/**/*"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"

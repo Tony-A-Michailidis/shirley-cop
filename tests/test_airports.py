@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from helpers import demo_settings
-from kestrelcop.ai.mock import mock_ask
-from kestrelcop.ai.tools import PictureTools
-from kestrelcop.airports import airport_by_code, load_airports, nearest_airports
-from kestrelcop.store import Store
+from shirleycop.ai.mock import mock_ask
+from shirleycop.ai.tools import PictureTools
+from shirleycop.airports import airport_by_code, load_airports, nearest_airports
+from shirleycop.store import Store
 
 VANCOUVER = (49.2827, -123.1207)
 

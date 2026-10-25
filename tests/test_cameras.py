@@ -10,15 +10,15 @@ from types import SimpleNamespace as NS
 import pytest
 
 from helpers import AsgiClient, RecordingContext, demo_settings
-from kestrelcop.ai import WatchOfficer
-from kestrelcop.ai.mock import mock_ask
-from kestrelcop.ai.tools import PictureTools
-from kestrelcop.feeds import cameras as cams
-from kestrelcop.feeds.cameras import (CamerasFeed, camera_from_caltrans, camera_from_cars, camera_from_drivebc,
+from shirleycop.ai import WatchOfficer
+from shirleycop.ai.mock import mock_ask
+from shirleycop.ai.tools import PictureTools
+from shirleycop.feeds import cameras as cams
+from shirleycop.feeds.cameras import (CamerasFeed, camera_from_caltrans, camera_from_cars, camera_from_drivebc,
                                       camera_from_ottawa, camera_from_toronto, camera_from_wsdot, fetch_camera_image)
-from kestrelcop.pipeline import Pipeline
-from kestrelcop.store import Store
-from kestrelcop.web import server
+from shirleycop.pipeline import Pipeline
+from shirleycop.store import Store
+from shirleycop.web import server
 
 NOW = datetime(2026, 10, 15, 12, 0, 0, tzinfo=timezone.utc)
 
@@ -183,7 +183,7 @@ async def test_watch_officer_hands_the_image_to_the_model(monkeypatch):
     async def fake_fetch(http, url):
         return b"\xff\xd8fake", "image/jpeg"
 
-    monkeypatch.setattr("kestrelcop.ai.watch_officer.fetch_camera_image", fake_fetch)
+    monkeypatch.setattr("shirleycop.ai.watch_officer.fetch_camera_image", fake_fetch)
     events = [ev async for ev in officer.ask_stream("What does the Booth camera show?")]
     step = next(e for e in events if e["t"] == "tool_result")
     assert step["tool"] == "view_camera" and step["image_url"].endswith("id=49") and step["camera_uid"] == "cam-ott-49"
@@ -202,7 +202,7 @@ async def test_camera_image_proxy_endpoint(monkeypatch):
     async def fake_fetch(http, url):
         return b"\xff\xd8proxied", "image/jpeg"
 
-    monkeypatch.setattr("kestrelcop.web.server.fetch_camera_image", fake_fetch)
+    monkeypatch.setattr("shirleycop.web.server.fetch_camera_image", fake_fetch)
     async with AsgiClient(app) as client:
         code, headers, body = await client.request("GET", "/api/camera/cam-ott-49/image")
         assert code == 200 and headers["content-type"].startswith("image/jpeg") and body == b"\xff\xd8proxied"

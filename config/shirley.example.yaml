@@ -1,4 +1,4 @@
-# Kestrel COP configuration. Secrets come from the environment: ${VAR} is expanded at load time.
+# Shirley COP configuration. Secrets come from the environment: ${VAR} is expanded at load time.
 area:
   name: Hampton Roads / Chesapeake approaches
   center: [36.95, -76.30]      # lat, lon
@@ -45,8 +45,8 @@ feeds:
 tak:
   enabled: false
   url: tcp://127.0.0.1:8087        # TAK Server: tls://host:8089 with the certs below
-  # tls_client_cert: certs/kestrel.pem
-  # tls_client_key: certs/kestrel.key
+  # tls_client_cert: certs/shirley.pem
+  # tls_client_key: certs/shirley.key
   # tls_dont_verify: true
   publish_alerts: true
   publish_cameras: false           # traffic cameras as markers in ATAK (many; off by default)
@@ -64,7 +64,7 @@ rules:
 
 ai:
   enabled: true
-  model: claude-sonnet-5-5         # ANTHROPIC_API_KEY in the environment; without it Kestrel runs the mock watch officer
+  model: claude-sonnet-5-5         # ANTHROPIC_API_KEY in the environment; without it Shirley runs the mock watch officer
   triage_model: claude-haiku-4-5-20251001   # cheaper model for alert SPOTREPs (optional)
   auto_sitrep: true
   sitrep_every_minutes: 10

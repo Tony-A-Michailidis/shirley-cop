@@ -7,10 +7,10 @@ import asyncio
 import pytest
 
 from helpers import demo_settings
-from kestrelcop.bus import Bus
-from kestrelcop.config import TakConfig
-from kestrelcop.cot.tak import TakPublisher, encode_bus_message
-from kestrelcop.models import Alert, Event, Track
+from shirleycop.bus import Bus
+from shirleycop.config import TakConfig
+from shirleycop.cot.tak import TakPublisher, encode_bus_message
+from shirleycop.models import Alert, Event, Track
 
 
 def sample_track() -> Track:

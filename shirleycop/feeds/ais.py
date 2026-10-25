@@ -12,7 +12,7 @@ from ..cot.sidc import ais_function, sea_codes
 from ..models import Track, utcnow
 from .base import Feed, bbox
 
-log = logging.getLogger("kestrel.feeds.ais")
+log = logging.getLogger("shirley.feeds.ais")
 
 NAV_STATUS = {
     0: "under way using engine", 1: "at anchor", 2: "not under command", 3: "restricted manoeuvrability",

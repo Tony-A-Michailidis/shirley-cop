@@ -32,7 +32,7 @@ from ..feeds.cameras import fetch_camera_image
 from ..models import Event, FeedStatus, Sitrep, Track
 from ..pipeline import Pipeline
 
-log = logging.getLogger("kestrel.web")
+log = logging.getLogger("shirley.web")
 STATIC_DIR = Path(__file__).parent / "static"
 VENDOR_DIR = STATIC_DIR / "vendor"
 
@@ -228,7 +228,7 @@ def create_app(settings: Settings, pipeline: Pipeline | None = None) -> Starlett
         return _json(result)
 
     async def camera_image(request: Request) -> Response:
-        """The current still of a camera, fetched by Kestrel: used by the console when the agency blocks the
+        """The current still of a camera, fetched by Shirley: used by the console when the agency blocks the
         browser (referer or mixed-content rules) and shared with the watch officer's view_camera tool."""
         uid = request.path_params["uid"]
         e = store.events.get(uid)
@@ -263,7 +263,7 @@ def create_app(settings: Settings, pipeline: Pipeline | None = None) -> Starlett
         return _json([f.model_dump(mode="json") for f in store.feeds.values()])
 
     async def cot(request: Request) -> Response:
-        """The exact CoT XML Kestrel would send to a TAK server for this track or event."""
+        """The exact CoT XML Shirley would send to a TAK server for this track or event."""
         uid = request.path_params["uid"]
         t = store.get_track(uid)
         if t:

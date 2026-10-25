@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Generate MapLibre glyph PBF ranges (signed-distance-field fonts) from a TTF/OTF file.
 
-Kestrel serves its own label font so the map never depends on a third-party glyph server, which
+Shirley serves its own label font so the map never depends on a third-party glyph server, which
 matters on a disconnected laptop or an air-gapped network. The output is the same format fontnik
 produces for Mapbox/MapLibre: one protobuf file per 256-codepoint range, each glyph a 24 px SDF
 bitmap with a 3 px buffer (fontnik defaults: radius 8, cutoff 0.25).
 
     python tools/make_glyphs.py /usr/share/fonts/opentype/inter/Inter-SemiBold.otf "Inter SemiBold" \
-        --out kestrelcop/web/static/glyphs --ranges 0-255 256-511 8192-8447
+        --out shirleycop/web/static/glyphs --ranges 0-255 256-511 8192-8447
 
 Dependencies: Pillow, numpy, scipy (all pure-build wheels). No protobuf library is needed; the
 schema is five fields and is encoded by hand below.
@@ -147,7 +147,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("font", help="path to a .ttf/.otf file")
     ap.add_argument("name", help='fontstack name used in the style, e.g. "Inter SemiBold"')
-    ap.add_argument("--out", default="kestrelcop/web/static/glyphs")
+    ap.add_argument("--out", default="shirleycop/web/static/glyphs")
     ap.add_argument("--ranges", nargs="+", default=["0-255", "256-511"], help="codepoint ranges, 256 wide, e.g. 0-255")
     args = ap.parse_args()
     out_dir = Path(args.out) / args.name

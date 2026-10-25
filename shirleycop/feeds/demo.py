@@ -380,7 +380,7 @@ class DemoFeed(Feed):
                 except asyncio.CancelledError:
                     raise
                 except Exception:  # noqa: BLE001
-                    logging.getLogger("kestrel.feeds.demo").exception("demo tick failed")
+                    logging.getLogger("shirley.feeds.demo").exception("demo tick failed")
                 await asyncio.sleep(self.poll_seconds)
         finally:
             await self.aclose()

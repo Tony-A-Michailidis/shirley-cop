@@ -1,7 +1,7 @@
 """Traffic and roadside cameras from open government sources, as `camera` events on the picture.
 
 Every source publishes a list of fixed cameras with a position and a URL of a still image that the agency
-refreshes every one to fifteen minutes. Kestrel keeps the list (filtered to the configured area), draws each
+refreshes every one to fifteen minutes. Shirley keeps the list (filtered to the configured area), draws each
 camera on the map, lets the console and the watch officer fetch the current still, and never re-hosts imagery:
 the browser pulls from the agency, and the server only proxies a frame on demand for the model.
 
@@ -31,7 +31,7 @@ from ..geo import haversine_km
 from ..models import Event, utcnow
 from .base import Feed
 
-log = logging.getLogger("kestrel.feeds.cameras")
+log = logging.getLogger("shirley.feeds.cameras")
 
 CAMERA_TTL = timedelta(minutes=50)   # a camera disappears if its source has not listed it for this long
 IMAGE_MAX_BYTES = 4 * 1024 * 1024
